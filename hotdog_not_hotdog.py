@@ -5,9 +5,11 @@ from keras.preprocessing.image import ImageDataGenerator
 #Preprocessing training set for data augmentation
 train_datagen = ImageDataGenerator(
         rescale=1./255,
+        rotation_range = 180,
         shear_range=0.2,
         zoom_range=0.2,
-        horizontal_flip=True)
+        horizontal_flip=True,
+        vertical_flip = True)
 
 training_set = train_datagen.flow_from_directory(
         'hotdog/train',
@@ -29,20 +31,22 @@ cnn = tf.keras.models.Sequential()
 
 #First layer
 cnn.add(tf.keras.layers.Conv2D(filters = 32, kernel_size = 3, activation = 'relu', input_shape = [64,64,3]))
-cnn.add(tf.keras.layers.MaxPooling2D(pool_size = 3))
+cnn.add(tf.keras.layers.MaxPooling2D(pool_size = 3,strides = 2))
 
 #Second layers
 cnn.add(tf.keras.layers.Conv2D(filters = 32, kernel_size = 3, activation = 'relu'))
-cnn.add(tf.keras.layers.MaxPooling2D(pool_size = 3))
+cnn.add(tf.keras.layers.MaxPooling2D(pool_size = 3,strides = 2))
 
 #Flattening
 cnn.add(tf.keras.layers.Flatten())
 
 #Fully connection
 cnn.add(tf.keras.layers.Dense(units = 256, activation = 'relu'))
-cnn.add(tf.keras.layers.Dropout(0.4))
+cnn.add(tf.keras.layers.Dropout(0.2))
 cnn.add(tf.keras.layers.Dense(units = 128, activation = 'relu'))
-cnn.add(tf.keras.layers.Dropout(0.4))
+cnn.add(tf.keras.layers.Dropout(0.2))
+cnn.add(tf.keras.layers.Dense(units = 64, activation = 'relu'))
+cnn.add(tf.keras.layers.Dropout(0.2))
 cnn.add(tf.keras.layers.Dense(units = 1, activation = 'sigmoid'))
 
 #Training the CNN
